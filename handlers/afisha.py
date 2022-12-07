@@ -18,7 +18,7 @@ async def afisha(message: Message):
 
 @afisha_labeler.message(payload={'cmd': 'afisha_today'})
 async def afisha(message: Message):
-    afisha = get_afisha(check_user(message.from_id)[0], 'today')
+    afisha = await get_afisha(check_user(message.from_id)[0], 'today')
     if afisha:
         text = str()
         for item in afisha:
@@ -30,7 +30,7 @@ async def afisha(message: Message):
 
 @afisha_labeler.message(payload={'cmd': 'afisha_tomorrow'})
 async def afisha(message: Message):
-    afisha = get_afisha(check_user(message.from_id)[0], 'tomorrow')
+    afisha = await get_afisha(check_user(message.from_id)[0], 'tomorrow')
     if afisha:
         text = str()
         for item in afisha:

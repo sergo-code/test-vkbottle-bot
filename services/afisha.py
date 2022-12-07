@@ -1,16 +1,18 @@
-import requests
 import json
 from datetime import date, timedelta
 
+from utils.async_requests import request
 
-def load_city():
+
+async def load_city():
     url = 'https://mapi.kassa.rambler.ru/api/v21/cities'
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 YaBrowser/22.11.2.807 Yowser/2.5 Safari/537.36',
         'x-application-key': '7399d50b-698a-4d86-a851-a5c1b1714dfc',
     }
-    response = requests.get(url, headers=headers)
-    city = response.json()
+    response = await request(url=url, headers=headers)
+
+    city = json.loads(response)
     city_code = dict()
     for item in city:
         city_code[item['name']] = item['id']
@@ -19,7 +21,7 @@ def load_city():
         json.dump(city_code, file)
 
 
-def get_afisha(city, day):
+async def get_afisha(city, day):
     if day == 'today':
         current_date = date.today()
     elif day == 'tomorrow':
@@ -35,9 +37,10 @@ def get_afisha(city, day):
         'x-application-key': '7399d50b-698a-4d86-a851-a5c1b1714dfc',
         'x-cityid': f'{city_id}',
     }
-    response = requests.get(url, headers=headers)
 
-    afisha = response.json().get('creations', False)
+    response = await request(url=url, headers=headers)
+
+    afisha = json.loads(response).get('creations', False)
     if afisha:
         afisha_list = list()
         for item in afisha:
