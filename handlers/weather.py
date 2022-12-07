@@ -18,14 +18,25 @@ async def weather(message: Message):
 
 @weather_labeler.message(payload={'cmd': 'weather_today'})
 async def weather(message: Message):
-    weather = get_weather(check_user(message.from_id)[0])
-    text = f"Сейчас: {weather['temp']}\n" \
-           f"Ощущается: {weather['temp_min']}\n" \
-           f"Максимальная температура: {weather['temp_max']}\n" \
-           f"Минимальная температура: {weather['temp_min']}\n"
+    city = check_user(message.from_id)[0]
+    weather = await get_weather(city, 'today')
+    text = f'Погода [{city}]\n\n'
+    for item in weather:
+        text += f"&#8986; - - - - - {item['time']} - - - - -\n" \
+                f"&#127777; {item['temperature']}\n" \
+                f"&#128221; {item['description']}\n\n"
+
     await message.answer(text)
 
 
 @weather_labeler.message(payload={'cmd': 'weather_tomorrow'})
 async def weather(message: Message):
-    await message.answer(f"Погода завтра")
+    city = check_user(message.from_id)[0]
+    weather = await get_weather(city, 'tomorrow')
+    text = f'Погода [{city}]\n\n'
+    for item in weather:
+        text += f"&#8986; - - - - - {item['time']} - - - - -\n" \
+                f"&#127777; {item['temperature']}\n" \
+                f"&#128221; {item['description']}\n\n"
+
+    await message.answer(text)
